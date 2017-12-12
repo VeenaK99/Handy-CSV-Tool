@@ -58,7 +58,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="StringSplitConfig.cs" />
+    <Compile Include="Config\CSVConfigItem.cs" />
+    <Compile Include="Config\CSVConfigurationCollection.cs" />
+    <Compile Include="Config\StringSplitConfigDataSection.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -96,7 +98,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icons8-comma-50.png" />
