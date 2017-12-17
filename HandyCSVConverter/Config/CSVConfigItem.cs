@@ -96,5 +96,18 @@ namespace HandyCSVConverter
             get { return (int)this["max-items-per-line"]; }
             set { this["max-items-per-line"] = value; }
         }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to remove blank items after the item is split
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [remove blank items]; otherwise, <c>false</c>.
+        /// </value>
+        [ConfigurationProperty("remove-blank-items", IsRequired = false, DefaultValue = true)]
+        public bool RemoveBlankItems
+        {
+            get { return (bool)this["remove-blank-items"]; }
+            set { this["remove-blank-items"] = value; }
+        }
     }
 }

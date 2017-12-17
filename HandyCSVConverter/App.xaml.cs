@@ -36,8 +36,9 @@ namespace HandyCSVConverter
             CSVConfigItem item = new CSVConfigItem();
             item.SplitChar = @"\r\n";
             item.FieldDelimiter = ",";
-            item.EncloseCharacter = string.Empty;
+            item.EncloseCharacter = "'";
             item.MaxItemsPerLine = -1;
+            item.RemoveBlankItems = true;
             this.commaSeperatorDefault = this.GetConcatenatedString(item);
         }
 
@@ -102,7 +103,9 @@ namespace HandyCSVConverter
             var allItems = actionType.Split(new string[] { ParameterDelimiter }, StringSplitOptions.None);
             int maxLines = -1;
             int.TryParse(allItems[3], out maxLines);
-            outPutText = this.ConvertInputText(inputText, allItems[0], allItems[1], allItems[2], maxLines);
+            bool removeBlankEntries = true;
+            bool.TryParse(allItems[4], out removeBlankEntries);
+            outPutText = this.ConvertInputText(inputText, allItems[0], allItems[1], allItems[2], maxLines, removeBlankEntries);
 
             Clipboard.SetText(outPutText);
         }
@@ -116,10 +119,15 @@ namespace HandyCSVConverter
         /// <param name="encloseCharacter">The character to be enclosed when for each of the delimited field.</param>
         /// <param name="lengthPerLine">Number of fields to be present per line, for example for database; if the input field has 2000 lines and the length per line is 1000 then in each
         /// line we will have 1000 characters.</param>
-        /// <returns>Returns the converted string based on the input parameters</returns>
-        private string ConvertInputText(string inputText, string splitChar, string delimiter, string encloseCharacter = "'", int lengthPerLine = -1)
+        /// <param name="removeBlankEntries">if set to true then blank entries are ignored during conversion else they are retained 
+        /// Useful when converting a delimited text from one form to another.</param>
+        /// <returns>
+        /// Returns the converted string based on the input parameters
+        /// </returns>
+        private string ConvertInputText(string inputText, string splitChar, string delimiter, string encloseCharacter = "'", int lengthPerLine = -1, bool removeBlankEntries = true)
         {
-            string[] splitArray = inputText.Split(splitChar.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            StringSplitOptions options = removeBlankEntries ? StringSplitOptions.RemoveEmptyEntries : StringSplitOptions.None;
+            string[] splitArray = inputText.Split(splitChar.ToCharArray(), options);
             string outText = string.Empty;
             if (lengthPerLine != -1)
             {
@@ -208,10 +216,12 @@ namespace HandyCSVConverter
                 this.GetUnescapedCharacter(configItem.SplitChar) + ParameterDelimiter
                 + this.GetUnescapedCharacter(configItem.FieldDelimiter) + ParameterDelimiter
                 + this.GetUnescapedCharacter(configItem.EncloseCharacter) + ParameterDelimiter
-                + this.GetUnescapedCharacter(configItem.MaxItemsPerLine.ToString()) + ParameterDelimiter + @"""";
+                + this.GetUnescapedCharacter(configItem.MaxItemsPerLine.ToString()) + ParameterDelimiter
+                + this.GetUnescapedCharacter(configItem.RemoveBlankItems.ToString()) + ParameterDelimiter
+                + @"""";
             return outPut;
         }
-
+    
         /// <summary>
         /// Gets the unescaped character. If the input begins with \ then this method attempts to get
         ///  the equivalent ASCII string else returns the original input
